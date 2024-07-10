@@ -1,99 +1,162 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
 import pandas as pd
 import requests
 
 
+def add_book_gui():
+    def submit_book():
+        title = title_entry.get()
+        author = author_entry.get()
+        book_type = type_var.get()
+        note = note_entry.get("1.0", "end-1c")
 
-def add_book():
-  title_input = input("Enter title of book: ")
-  author_input = input("Enter author of book: ")
-  type_input = input("Enter type of book (paper, digital, or audio): ")
-    # data of Player and their performance
-  data = {
-        'title': [title_input],
-        'author': [author_input],
-        'type': [type_input]
-    }
-  
-    # Make data frame of above data
-  df = pd.DataFrame(data)
-  
-    # append data frame to CSV file
-  df.to_csv('myShelf.csv', mode='a', index=False, header=False)
-  
-    # print message
-  print("Book added to your collection.")
-  print("\033[1;31;40m Do you want to go back to the menu?\033[0m")
-  exit_option = input("Enter 'yes' or 'no': ")
-  if exit_option == "yes":
-    menu_input()
-  else:
-    print("Goodbye!")
-  
-def view_library():
-  df = pd.read_csv('myShelf.csv')
-  print(df)
-  print("\033[1;31;40m Do you want to go back to the menu?\033[0m")
-  exit_option = input("Enter 'yes' or 'no': ")
-  if exit_option == "yes":
-    menu_input()
-  else:
-    print("Goodbye!")
-  
-def menu_input():
-    print("\033[1;35;40m Menu Options \033[0m")
-    print("1. Add book")
-    print("2. View library")
-    print("3. Search for a book")
-    while True:
-       menu_input = input("Please enter a number corresponding to your menu option:")
-       print("You selected option:", menu_input)
-       if menu_input == "1":
-         add_book()
-         break
-       elif menu_input == "2":
-           view_library()
-           break 
-       elif menu_input == "3":
-          search_for_book()
-          break
+        if title and author:
+            df = pd.read_csv('myShelf.csv')
+            data = {
+                'title': [title],
+                'author': [author],
+                'type': [book_type],
+                'note': [note]
+            }
+            new_df = pd.DataFrame(data)
+            df = pd.concat([df, new_df], ignore_index=True)
+            df.to_csv('myShelf.csv', index=False)
+            messagebox.showinfo("Book added to your library!")
+            add_book_window.destroy()
+        else:
+            messagebox.showerror("Please fill in all fields")
 
-def search_for_book():
-  title_search = input("Enter the title of the book you want to search for: ")
-  openlibrary = "https://openlibrary.org/search.json?title=" + title_search
-  response = requests.get(openlibrary)
-  info = response.json() 
-  print(info['docs'][0]['author_name'][0])
+    add_book_window = tk.Toplevel(root)
+    add_book_window.title("Add Book")
 
-  print(info['docs'][0]['first_publish_year'])
+    title_label = tk.Label(add_book_window, text="Title:", font="Helvetica 10 bold")
+    title_label.grid(row=0, column=0, padx=5, pady=5)
+    title_entry = tk.Entry(add_book_window)
+    title_entry.grid(row=0, column=1, padx=5, pady=5)
 
-  print("\033[1;31;40m Do you want to add this book to your library?\033[0m")
-  search_input = input("Enter 'yes' or 'no': ")
-  if search_input == "yes":
-    type_input = input("Enter type of book (paper, digital, or audio): ")
-    data = {
-      'title': [title_search],
-      'author': [info['docs'][0]['author_name'][0]],
-      'type': [type_input]
-    }
+    author_label = tk.Label(add_book_window, text="Author:", font="Helvetica 10 bold")
+    author_label.grid(row=1, column=0, padx=5, pady=5)
+    author_entry = tk.Entry(add_book_window)
+    author_entry.grid(row=1, column=1, padx=5, pady=5)
 
-    # Make data frame of above data
-    df = pd.DataFrame(data)
+    type_label = tk.Label(add_book_window, text="Type:", font="Helvetica 10 bold")
+    type_label.grid(row=2, column=0, padx=5, pady=5)
+    type_var = tk.StringVar(add_book_window)
+    type_var.set("paper")  # Default value
+    type_options = ["paper", "digital", "audio"]
+    type_dropdown = ttk.Combobox(add_book_window, textvariable=type_var, values=type_options)
+    type_dropdown.grid(row=2, column=1, padx=5, pady=5)
 
-    # append data frame to CSV file
-    df.to_csv('myShelf.csv', mode='a', index=False, header=False)
-    print ("would you like to search for another book?")
-    search_input2 = input("Enter 'yes' or 'no': ")
-    if search_input2 == "yes":
-      search_for_book()
-    else:
-      menu_input()
+    note_label = tk.Label(add_book_window, text="Note:", font="Helvetica 10 bold")
+    note_label.grid(row=3, column=0, padx=5, pady=5)
+    note_entry = tk.Text(add_book_window, height=5, width=30)
+    note_entry.grid(row=3, column=1, padx=5, pady=5)
 
-  elif search_input == "no":
-    print("\033[1;31;40m Do you want to go back to the menu?\033[0m")
-  exit_option = input("Enter 'yes' or 'no': ")
-  if exit_option == "yes":
-      menu_input()
-  else:
-      print("Goodbye!")
-    
-menu_input()
+    submit_button = tk.Button(add_book_window, text="Submit", command=submit_book)
+    submit_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+def view_library_gui():
+    view_window = tk.Toplevel(root)
+    view_window.title("Library")
+
+    df = pd.read_csv('myShelf.csv')
+    tree = ttk.Treeview(view_window, columns=("Title", "Author", "Type", "Note"), show="headings")
+    tree.heading("Title", text="Title")
+    tree.heading("Author", text="Author")
+    tree.heading("Type", text="Type")
+    tree.heading("Note", text="Note")
+
+    for index, row in df.iterrows():
+        tree.insert("", "end", values=(row['title'], row['author'], row['type'], row['note']))
+
+    tree.pack()
+
+def search_for_book_gui():
+    def search_book():
+        title_search = search_entry.get()
+        if title_search:
+            openlibrary = "https://openlibrary.org/search.json?title=" + title_search
+            response = requests.get(openlibrary)
+            info = response.json()
+            if info['docs']:
+                author = info['docs'][0]['author_name'][0] if 'author_name' in info['docs'][0] else "N/A"
+                publish_year = info['docs'][0]['first_publish_year'] if 'first_publish_year' in info['docs'][0] else "N/A"
+                
+                search_result_window = tk.Toplevel(root)
+                search_result_window.title("Search Results")
+                
+                result_label = tk.Label(search_result_window, text=f"Title: {title_search}\nAuthor: {author}\nPublished: {publish_year}")
+                result_label.pack(pady=10)
+                
+                def add_to_library():
+                    def submit_book_details():
+                        book_type = type_var.get()
+                        note = note_entry.get("1.0", "end-1c")
+                        
+                        df = pd.read_csv('myShelf.csv')
+                        data = {
+                            'title': [title_search],
+                            'author': [author],
+                            'type': [book_type],
+                            'note': [note]
+                        }
+                        new_df = pd.DataFrame(data)
+                        df = pd.concat([df, new_df], ignore_index=True)
+                        df.to_csv('myShelf.csv', index=False)
+                        messagebox.showinfo("Success", "Book added to your library!")
+                        add_book_details_window.destroy()
+                        search_result_window.destroy()
+
+                    add_book_details_window = tk.Toplevel(search_result_window)
+                    add_book_details_window.title("Add Book Details")
+                    
+                    type_label = tk.Label(add_book_details_window, text="Type:")
+                    type_label.grid(row=0, column=0, padx=5, pady=5)
+                    type_var = tk.StringVar(add_book_details_window)
+                    type_var.set("paper")  # Default value
+                    type_options = ["paper", "digital", "audio"]
+                    type_dropdown = ttk.Combobox(add_book_details_window, textvariable=type_var, values=type_options)
+                    type_dropdown.grid(row=0, column=1, padx=5, pady=5)
+                    
+                    note_label = tk.Label(add_book_details_window, text="Note:")
+                    note_label.grid(row=1, column=0, padx=5, pady=5)
+                    note_entry = tk.Text(add_book_details_window, height=5, width=30)
+                    note_entry.grid(row=1, column=1, padx=5, pady=5)
+                    
+                    submit_button = tk.Button(add_book_details_window, text="Submit", command=submit_book_details)
+                    submit_button.grid(row=2, column=0, columnspan=2, pady=10)
+                
+                add_button = tk.Button(search_result_window, text="Add to Library", command=add_to_library)
+                add_button.pack(pady=5)
+            else:
+                messagebox.showinfo("Not Found", "Book not found in Open Library")
+        else:
+            messagebox.showerror("Error", "Please enter a book title")
+
+    search_window = tk.Toplevel(root)
+    search_window.title("Search Book")
+
+    search_label = tk.Label(search_window, text="Enter Book Title:")
+    search_label.grid(row=0, column=0, padx=5, pady=5)
+    search_entry = tk.Entry(search_window)
+    search_entry.grid(row=0, column=1, padx=5, pady=5)
+
+    search_button = tk.Button(search_window, text="Search", command=search_book)
+    search_button.grid(row=1, column=0, columnspan=2, pady=10)
+
+# Create the main window
+root = tk.Tk()
+root.title("My Book Shelf")
+
+# Create menu buttons
+add_button = tk.Button(root, text="Add Book", command=add_book_gui)
+add_button.pack(pady=5)
+view_button = tk.Button(root, text="View Library", command=view_library_gui)
+view_button.pack(pady=5)
+search_button = tk.Button(root, text="Search Book", command=search_for_book_gui)
+search_button.pack(pady=5)
+
+root.mainloop()
+
