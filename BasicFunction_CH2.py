@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-
 import pandas as pd
 import requests
 
@@ -105,12 +104,11 @@ class LibApp(tk.Tk):
     self.edit_button = tk.Button(parent,
                                  text="Edit",
                                  command=self.edit_selected_book)
-    self.edit_button.pack()
-    self.delete_button = tk.Button(self.view_tab,
+    self.edit_button.pack(side="right")
+    self.delete_button = tk.Button(parent,
                                    text="Delete",
                                    command=self.delete_selected_book)
-
-    self.delete_button.pack()
+    self.delete_button.pack(side="right")
 
     self.selected_item = None
 
