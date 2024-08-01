@@ -25,7 +25,7 @@ class Main(object):
     
     def displayBooks(self):
       books=cur.execute("SELECT * FROM books").fetchall()
-      count = 0 # CH: this should be initialized here, not outside the function
+      count = 0 
       
       self.list_books.delete(0, END)
       for book in books:
@@ -380,11 +380,11 @@ class AddBook(Toplevel):
     self.ent_notes.place(x=150,y=165)
     #Button
     button=Button(self.bottomframe,text='Add Book',command=self.addBook2,
-                  font='verdana 10 bold',bg='#2488ff',fg='white')
+                  font='verdana 10 bold',bg='green',fg='white')
     button.place(x=300,y=350)
     #button 2
     button=Button(self.bottomframe,text='Search the Web',command=self.__init__2,
-                  font='verdana 10 bold',bg='#2488ff',fg='white')
+                  font='verdana 10 bold',bg='blue',fg='white')
     button.place(x=150,y=10)
 
   def searchBook(self):
