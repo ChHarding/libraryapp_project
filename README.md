@@ -13,6 +13,7 @@
 #Bugs
 - The edit selection is not currently functioning as intended.
 - There is currently no way to delete a book without editing the database file.
+- When you add a book you have to switch between tabs to update your library and see the most recently added book(s).
 
 #Functionality
 
