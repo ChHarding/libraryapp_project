@@ -14,6 +14,8 @@
 - The edit selection is not currently functioning as intended.
 - There is currently no way to delete a book without editing the database file.
 
+#Functionality
+
 <img width="1366" alt="Screenshot 2024-07-31 at 9 28 48 PM" src="https://github.com/user-attachments/assets/35813c7c-2bc8-41b6-8f35-819873fe932d">
 
 1. Add a Book
@@ -30,3 +32,9 @@
    
  4. Your Personal Library
     - These are all your books that are in the library database.
+   
+ 5. Library Stats
+    - <img width="1354" alt="Screenshot 2024-07-31 at 9 36 31 PM" src="https://github.com/user-attachments/assets/79749ea7-754d-474e-9cce-2842d2d1a5d7">
+    - If you select the details tab you will open the statistics.
+    - This shows details about your personal library.
+    - <img width="1349" alt="Screenshot 2024-07-31 at 9 36 43 PM" src="https://github.com/user-attachments/assets/d915a1fe-ba6c-42c2-9233-1c47724dfb9e">
